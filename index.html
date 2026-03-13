@@ -237,7 +237,7 @@ nav{
 .h-inner{
   position:relative;z-index:10;
   display:grid;grid-template-columns:1.15fr .85fr;
-  align-items:center;gap:56px;
+  align-items:flex-start;gap:56px;
   padding:128px 24px 80px;
   max-width:1220px;width:100%;
 }
@@ -291,54 +291,10 @@ h1.h-ttl{
 .ht-chip:last-child{border-right:1px solid rgba(255,255,255,.07);}
 .ht-chip .ck{color:var(--teal);font-size:10px;}
  
-/* ── RIGHT: typewriter + stats ── */
-.h-right{display:flex;flex-direction:column;gap:6px;padding-top:6px;}
+/* ── RIGHT: terminal at top + stats ── */
+.h-right{display:flex;flex-direction:column;gap:6px;align-self:flex-start;padding-top:0;}
  
 /* Terminal panel */
-.term{
-  background:rgba(8,12,18,.9);
-  border:1px solid rgba(0,229,160,.1);border-left:2px solid var(--teal2);
-  backdrop-filter:blur(24px);
-  animation:fu .8s var(--ease) .5s both;
-}
-.term-top{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:9px 14px;border-bottom:1px solid rgba(0,229,160,.07);
-  background:rgba(0,229,160,.025);
-}
-.term-label{font-family:var(--fm);font-size:8px;letter-spacing:.24em;color:rgba(0,229,160,.38);}
-.term-dots{display:flex;gap:5px;}
-.td{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.07);}
-.td:nth-child(1){background:rgba(224,40,64,.4);}
-.td:nth-child(2){background:rgba(232,160,32,.4);}
-.td:nth-child(3){background:rgba(0,229,160,.4);}
-.term-body{padding:14px 16px;min-height:116px;}
-#tw-done{display:flex;flex-direction:column;}
-.tw-line{
-  display:flex;align-items:baseline;gap:0;
-  padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);
-  opacity:0;transform:translateX(-6px);
-  animation:twi .32s var(--ease) forwards;
-}
-.tw-line:last-child{border-bottom:none;}
-@keyframes twi{to{opacity:1;transform:none;}}
-.tw-ln{font-family:var(--fm);font-size:9px;color:rgba(0,229,160,.28);min-width:26px;flex-shrink:0;margin-right:9px;user-select:none;}
-.tw-ln-a{font-family:var(--fm);font-size:9px;color:rgba(0,229,160,.28);min-width:26px;flex-shrink:0;margin-right:9px;}
-.tw-txt{font-family:var(--fb);font-size:clamp(13px,1.4vw,15px);font-weight:400;line-height:1.55;}
-.tw-line:nth-child(1) .tw-txt{color:rgba(237,244,255,.9);}
-.tw-line:nth-child(2) .tw-txt{color:rgba(200,220,238,.75);}
-.tw-line:nth-child(3) .tw-txt{color:rgba(165,198,222,.60);}
-.tw-line:nth-child(4) .tw-txt{color:rgba(130,175,208,.46);}
-#tw-active{display:flex;align-items:baseline;padding:3px 0;min-height:24px;}
-#tw-live{font-family:var(--fb);font-size:clamp(13px,1.4vw,15px);color:var(--white);}
-#tw-cur{
-  display:inline-block;width:1.5px;height:.95em;
-  background:var(--teal);margin-left:2px;vertical-align:middle;
-  box-shadow:0 0 7px var(--teal);
-  animation:cb .55s step-end infinite;
-}
-@keyframes cb{0%,100%{opacity:1}50%{opacity:0}}
-#tw-cur.done{animation:none;opacity:0;transition:opacity 1.5s ease 1s;}
  
 /* Stat grid */
 .h-stats{
@@ -923,23 +879,8 @@ footer p{font-family:var(--fm);font-size:9px;letter-spacing:.1em;color:rgba(255,
       </div>
     </div>
  
-    <!-- RIGHT -->
+    <!-- RIGHT — terminal at top, then stats -->
     <div class="h-right">
-      <!-- Terminal typewriter -->
-      <div class="term">
-        <div class="term-top">
-          <span class="term-label">GAME.OVERVIEW — INITIALIZING</span>
-          <div class="term-dots"><span class="td"></span><span class="td"></span><span class="td"></span></div>
-        </div>
-        <div class="term-body">
-          <div id="tw-done"></div>
-          <div id="tw-active">
-            <span class="tw-ln-a" id="tw-num">01</span>
-            <span id="tw-live"></span>
-            <span id="tw-cur">|</span>
-          </div>
-        </div>
-      </div>
  
       <!-- Stats -->
       <div class="h-stats">
@@ -1413,45 +1354,6 @@ function faq(btn){
   if(!open) item.classList.add('open');
 }
  
-/* Typewriter — terminal style */
-(function(){
-  const liveEl = document.getElementById('tw-live');
-  const doneEl = document.getElementById('tw-done');
-  const cursor = document.getElementById('tw-cur');
-  const numEl  = document.getElementById('tw-num');
-  const active = document.getElementById('tw-active');
-  if(!liveEl) return;
- 
-  const lines = [
-    {n:'01', t:'Online open-world survival game.'},
-    {n:'02', t:'Post-apocalyptic Earth warped by Stardust.'},
-    {n:'03', t:'Explore. Loot. Build. Craft. Evolve.'},
-    {n:'04', t:'Become more than human.'},
-  ];
-  let li=0, ci=0;
- 
-  function type(){
-    numEl.textContent = lines[li].n;
-    if(ci < lines[li].t.length){
-      liveEl.textContent += lines[li].t[ci++];
-      setTimeout(type, 6 + Math.random()*4);
-    } else {
-      setTimeout(archive, 90);
-    }
-  }
-  function archive(){
-    const row = document.createElement('div');
-    row.className = 'tw-line';
-    const ln = document.createElement('span'); ln.className='tw-ln'; ln.textContent=lines[li].n;
-    const tx = document.createElement('span'); tx.className='tw-txt'; tx.textContent=lines[li].t;
-    row.appendChild(ln); row.appendChild(tx);
-    doneEl.appendChild(row);
-    liveEl.textContent=''; ci=0; li++;
-    if(li<lines.length) setTimeout(type,45);
-    else{ cursor.classList.add('done'); active.style.display='none'; }
-  }
-  setTimeout(type, 600);
-})();
  
 /* Magnetic CTA */
 document.querySelectorAll('.btn').forEach(btn=>{
